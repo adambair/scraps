@@ -1,0 +1,22 @@
+Pushing ahead with new features in the code as it is today is going to be a slow and frustrating process for both parties.
+
+If we were to add new features without a full test suite, there is no way to know if we're breaking other parts of the app or introducing new bugs.  An example of this would be our Enum changes breaking authentication.  Implementing new features right now will just compound the existing code quality, clarity, and performance issues.
+
+In order to create new functionality we need to be able to understand the functionality that is already in place.  The majority of the methods are far too long to understand at a quick glance and are not grouped in an organized fashion.  
+
+You need to consider how this looks from an outside team.  We were not privy to the original development and are not familiar with how things work, were intended to work, or how things got to the way they are now.  
+
+Code clarity is very important for this reason.  This lack of clarity is a huge hurdle that will certainly slow down the implementation of new features (it's even slowing us down right now during refactoring).
+
+We've seen this before with past clients and it's highly recommended that you spend some time fixing, refactoring, and testing what currently exists.
+
+scrutinizing
+intention revealing names
+representable as a concept
+testability
+higher layer abstractions
+decompose behavior into methods
+levels of indirection
+all the code in a single method should be at the same level of abstraction
+disconnect between the levels of abstractions
+inco
