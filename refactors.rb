@@ -208,6 +208,69 @@ end
 # --------------------------------------------------
 
 # BEFORE -------------------------------------------
+class User < ActiveRecord::Base
+  def allows_email_from_anyone?
+     if self.user_id != nil && self.user.user_communication_pref.email_from_anyone == 1 && !self.preferred_email.blank?
+       return true
+     else
+       return false
+     end
+  end
+
+  def allows_email_from?(author)
+    if allows_email_from_anyone? || self.user_id != nil && self.is_my_buddy?(author) && self.user.user_communication_pref.email_from_network == 1 && !self.preferred_email.blank?
+      return true
+    else
+      return false
+    end
+  end
+
+  def is_my_buddy?(author)
+   if !direct_coauthors.find(:first,:conditions => ["buddy_author_id = ?",author.id]).blank? || !AuthorNetwork.find_coauthors_of(author,1).blank?
+      return true
+   else
+      return false
+   end
+  end
+end
+# AFTER --------------------------------------------
+class User < ActiveRecord::Base
+  def allows_email_from_anyone?
+    user.user_communication_pref.email_from_anyone == 1 && preferred_email unless user_id?
+  end
+
+  def allows_email_from?(author)
+    allows_email_from_anyone? && is_my_buddy?(author) && user.user_communication_pref.email_from_network == 1
+  end
+
+  def buddies_with?(author)
+    coauthors.include?(author)
+  end
+end
+# SPEC ---------------------------------------------
+# --------------------------------------------------
+
+# BEFORE -------------------------------------------
+# AFTER --------------------------------------------
+# SPEC ---------------------------------------------
+# --------------------------------------------------
+
+# BEFORE -------------------------------------------
+# AFTER --------------------------------------------
+# SPEC ---------------------------------------------
+# --------------------------------------------------
+
+# BEFORE -------------------------------------------
+# AFTER --------------------------------------------
+# SPEC ---------------------------------------------
+# --------------------------------------------------
+
+# BEFORE -------------------------------------------
+# AFTER --------------------------------------------
+# SPEC ---------------------------------------------
+# --------------------------------------------------
+
+# BEFORE -------------------------------------------
 # AFTER --------------------------------------------
 # SPEC ---------------------------------------------
 # --------------------------------------------------
