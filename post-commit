@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+# change your account, username, password, and group
+# it'll run every time you commit (not push, mind you)
+ 
+# account   = ''
+# username  = ''
+# password  = ''
+# group     = ''
+#  
+# git_text      = `git log -n1 --pretty=format:"(%h) %s"`
+# git_long_text = `git log -n1 --stat`
+# git_branch    = `git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1/"`.gsub('*','').strip
+#  
+# message = "d #{group} #commit [#{git_branch}] #{git_text}"
+# api     = "https://#{account}.presentlyapp.com/api/twitter/statuses/update.xml"
+#  
+# `curl #{api} -u #{username}:#{password} -d status="#{message}" -d paste_format='text' -d paste_text='#{git_long_text}'`
+
+require 'rubygems'
+require 'tinder'
+require 'restclient'
+require 'active_support/core_ext'
+require 'json'
+
+PRESENTLY_CREDENTIALS = {
+  :intridea => {
+    :username => '',
+    :password => '',
+    :group => ''
+  },
+}
+
+CAMPFIRE_CREDENTIALS = {
+  :intridea => {
+    :token => '', # Get from the 'My info' page on Campfire
+    :room => '',
+    :ssl => true
+  }
+}
+
+git_text      = `git log -n1 --pretty=format:"(%h) %s"`
+git_long_text = `git log -n1 --stat`
+git_branch    = `git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1/"`.gsub('*','').strip
+message       = "[#{git_branch}] #{git_text}"
+
+PRESENTLY_CREDENTIALS.each_pair do |subdomain, creds|
+  puts "* Posting to the '#{subdomain}' Presently account."
+  RestClient.post(
+    "https://#{creds[:username]}:#{creds[:password]}@#{subdomain}.presentlyapp.com/api/twitter/statuses/update.json", 
+    :status => "d #{creds[:group]} #commit #{message}", 
+    :paste_text => git_long_text
+  )
+end
+
+CAMPFIRE_CREDENTIALS.each_pair do |subdomain, creds|
+  puts "* Posting to the '#{subdomain}' Campfire account."
+  post_url = "http#{'s' if creds[:ssl]}://#{creds[:token]}:X@#{subdomain}.campfirenow.com/room/#{creds[:room]}/speak.json"
+  
+  tinder = Tinder::Campfire.new(subdomain, :ssl => creds[:ssl])
+  tinder.login(creds[:token], 'X')
+  room = tinder.find_room_by_name(creds[:room])
+  room.speak message
+  room.paste git_long_text
+end
+
