@@ -19,4 +19,7 @@ decompose behavior into methods
 levels of indirection
 all the code in a single method should be at the same level of abstraction
 disconnect between the levels of abstractions
-inco
+incongruent
+incongruous - out of place
+dissonant - clashing/inharmonious
+
