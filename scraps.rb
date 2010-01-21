@@ -226,3 +226,41 @@ silently {some_code}
 #    imgio.content_type, imgio.original_filename = "image/png", fname
 #    return imgio
 # end
+#
+
+
+
+      # def find_resource_hash(path)
+      #   Dir["#{full_path}/*"].inject({}){ |result, resource|
+      #     puts resource.inspect
+      #     metafile = MetaFile.meta_data(resource)
+      #     metafile.merge!({'location' => find_location(resource),
+      #                     'name'     => find_name(resource),
+      #                     'contents' => MetaFile.read(resource)})
+      #     result[metafile['name']] = metafile
+      #     result
+      #   }
+      # end
+
+
+# create unfuddle tickets from a list
+# api reference: http://unfuddle.com/docs/api 
+# ticket sructure: http://unfuddle.com/docs/api/data_models#ticket
+tickets = <<TIX
+Fix/Implement edit and save functionality for Contracts
+Fix derived fields on Contracts/Contractors
+Figure out how to persist fields from the r/o database (language, comments)
+Allow users to manually add contracts to contractors
+Move contract_type from Contractor to Contract
+Fix pagination on Contractor search when there are no results (should have no pagination)
+Add a date picker to all date fields in the application
+Allow users to batch upload/import a csv of Contracts (business logic involved)
+Create a custom report generator (filters/fields) that can export pdf and csv
+Integrate Joe's work with X509 auth sessions
+Create a rake task to export ERD diagrams (railroad, dot, conversion to png)
+TIX
+
+tickets.each_line do |summary|
+  `curl -i -u uname:pword -X POST -H 'Accept: application/xml' -H 'Content-type: application/xml' -d "<ticket><priority>3</priority><summary>#{summary}</summary></ticket>" 'http://intridea.unfuddle.com/api/v1/projects/155780/tickets'`
+end
+
