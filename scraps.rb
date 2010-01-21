@@ -127,18 +127,14 @@ module Youtube
 
 end
 
+# YAML
 # write yaml to a file
 open('filename', 'w') {|f| f << something.to_yaml}
 # read yaml from a file
 something = YAML.load(open('filename'))
 
-# rspec fake user authentication (acts_as_authenticated)
-def mock_user_authentication(allow_user_to_pass=true)
-  controller.stub!(:login_required).and_return(allow_user_to_pass)
-end
-
 # reading config information from a yml file
-@@config = YAML.load_file(File.join(RAILS_ROOT, 'config/widget.yml'))[RAILS_ENV].symbolize_keys
+@@settings = YAML.load_file(File.join(RAILS_ROOT, 'config/settings.yml'))[RAILS_ENV].symbolize_keys
 
 development:
   something: "some_value"
@@ -148,10 +144,53 @@ staging:
   something: "some_value"
   something2: "some_value2"
 
-@@config[:something] # => "some_value"
+@@settings[:something] # => "some_value"
+
+# yaml variables
+login: &login
+  username: username
+  password: password
+  adapter:  mysql
+  host:     localhost
+
+development:
+  database: development_db
+  <<: *login
+
+test:
+  database: testing_db
+  <<: *login
+
+production:
+  database: production_db
+  <<: *login
 
 
+# read an entire file in as a string
+file = File.open(File.expand_path(File.dirname(__FILE__) + "../fixtures/data/" + "jack_paper_1.xml"))
+file_contents_as_string = file.read
 
+# benchmark
+require 'yaml'
+require 'benchmark'
+
+n = 50
+puts "  Run #{n} times"
+Benchmark.bm do |x|
+  x.report { 1.upto(n) do ; ProfanityFilter::Base.clean(text); end }
+end
+
+# silently do something (ignore warnings)
+
+def silently(&block)
+  warn_level = $VERBOSE
+  $VERBOSE = nil
+  result = block.call
+  $VERBOSE = warn_level
+  result
+end
+
+silently {some_code}
 
 # dump = File.expand_path(File.dirname(__FILE__) + "/data/" + "artist_profile_image.yml")
 # artists_dump = YAML.load(open(dump)).compact!
