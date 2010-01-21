@@ -1,0 +1,4 @@
+Tested on Rails 2.1.0
+Originally designed to work with RESTful Auth
+  although this is relatively agnostic
+
