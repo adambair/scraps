@@ -86,6 +86,12 @@ class TumblrPost
   end
 
   def rewrite_image_paths
+    if @metadata["type"] == "regular" && @doc.xpath("//img")[0] && @doc.xpath("//img")[0]["src"] =~ /posterous/
+      # puts @doc.xpath("//img")[0]["src"]
+      # DO STUFF HERE
+    end
+    # puts "regular" if @metadata[:type] == "regular"
+    # puts "posterous" if @doc.xpath("//div")[0] && @doc.xpath("//div")[0]["class"] == "posterous_autopost"
     return unless @metadata["type"] == 'photo'
     src = @doc.xpath("//img")[0]["src"].gsub("..", "")
     dst = @doc.xpath("//img")[0]["src"].gsub("../images", "/images/tumblr")
@@ -150,10 +156,15 @@ class NanocBuilder
     output << "\n---\n\n"
   end
 
+  def posterous?
+    @tumblr_post.metadata["type"] == "regular" && @tumblr_post.doc.xpath("//img")[0] && @tumblr_post.doc.xpath("//img")[0]["src"] =~ /posterous/
+  end
+
   def tags
     data = @tumblr_post.info
     type = data[:type] unless data[:type] == "regular"
-    ["tumblr", type].join(", ")
+    posterous = 'posterous, photo' if posterous?
+    ["tumblr", type, posterous].compact.join(", ")
   end
 
   # NOOOOooooooo... Really? Let's just assign some things around uselessly.
