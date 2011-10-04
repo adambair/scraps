@@ -18,6 +18,9 @@
 # Converts output from the official Tumblr Exporter for Mac and converts it to
 # nanoc friendly files.
 #
+# Learn about the "official" tumblr exporter for mac here:
+# http://staff.tumblr.com/post/286303145/tumblr-backup-mac-beta
+#
 # Beware, this file is quick, dirty, and ugly and has not been refactored.
 # Emphasis on quick and dirty 
 #
