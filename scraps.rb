@@ -192,161 +192,56 @@ end
 
 silently {some_code}
 
-# dump = File.expand_path(File.dirname(__FILE__) + "/data/" + "artist_profile_image.yml")
-# artists_dump = YAML.load(open(dump)).compact!
-# 
-# artists_dump.each_with_index do |d, index|
-#   artist = Artist.find_by_first_name(d[:first_name], :conditions => "last_name = \"#{d[:last_name]}\"")
-#   if artist
-#     dump_image = File.expand_path(File.dirname(__FILE__) + "/data/" + "/artist_profile_images/" + d[:image])
-#     data = ''
-#     open(dump_image, 'rb') {|f| data << f.read}        
-#     image = Image.new(:id => index, :content_type => 'image/jpeg', :filename => d[:filename], 
-#             :is_illustration => true, :user_id => artist.id, :uploaded_data => imageio_for_data(data.to_s, d[:filename]) )
-#     if image.save
-#       artist.image_id = image.id
-#       artist.save
-#     end  
-#     print '.'
-#   else
-#     print 'x'
-#   end
-# end
-#
 
 
-# class MyStringIO < StringIO
-#   attr_reader :content_type, :original_filename
-#   attr_writer :content_type, :original_filename
-# end
-# 
-#  def self.imageio_for_data(data, fname)  
-#    imgio = MyStringIO.new(data)
-#    ext = 'jpeg' if 'jpg'==ext  # attachment_fu content type must say jpeg
-#    imgio.content_type, imgio.original_filename = "image/png", fname
-#    return imgio
-# end
-#
+dump = File.expand_path(File.dirname(__FILE__) + "/data/" + "artist_profile_image.yml")
+artists_dump = YAML.load(open(dump)).compact!
 
-
-
-      # def find_resource_hash(path)
-      #   Dir["#{full_path}/*"].inject({}){ |result, resource|
-      #     puts resource.inspect
-      #     metafile = MetaFile.meta_data(resource)
-      #     metafile.merge!({'location' => find_location(resource),
-      #                     'name'     => find_name(resource),
-      #                     'contents' => MetaFile.read(resource)})
-      #     result[metafile['name']] = metafile
-      #     result
-      #   }
-      # end
-
-
-# create unfuddle tickets from a list
-# api reference: http://unfuddle.com/docs/api 
-# ticket sructure: http://unfuddle.com/docs/api/data_models#ticket
-tickets = <<TIX
-Fix/Implement edit and save functionality for Contracts
-Fix derived fields on Contracts/Contractors
-Figure out how to persist fields from the r/o database (language, comments)
-Allow users to manually add contracts to contractors
-Move contract_type from Contractor to Contract
-Fix pagination on Contractor search when there are no results (should have no pagination)
-Add a date picker to all date fields in the application
-Allow users to batch upload/import a csv of Contracts (business logic involved)
-Create a custom report generator (filters/fields) that can export pdf and csv
-Integrate Joe's work with X509 auth sessions
-Create a rake task to export ERD diagrams (railroad, dot, conversion to png)
-TIX
-
-tickets.each_line do |summary|
-  `curl -i -u uname:pword -X POST -H 'Accept: application/xml' -H 'Content-type: application/xml' -d "<ticket><priority>3</priority><summary>#{summary}</summary></ticket>" 'http://intridea.unfuddle.com/api/v1/projects/155780/tickets'`
-end
-
-#-----------VERSION RAKE GOODNESS--------------
-
-# The version number is available in the application as APP_VERSION
-# It's displayed in the footer in all envs except production
-
-desc "Show the application's version number"
-task :version do
-  version = read_yaml
-  puts "Version #{display(version)}"
-end
-
-namespace :version do
-  namespace :bump do
-    %w(major minor patch).each do |type|
-      desc "Bump #{type} version number"
-      task type.to_sym do
-        version = read_yaml
-        version = bump(type.to_sym, version)
-        write_yaml(version)
-        puts "Bumped version to #{display(version)}"
-      end
-    end
-  end
-
-  desc "Set a specific version number - ex: set_to[1.5.1]"
-  task :set_to, :version do |t, args|
-    extracted = args[:version].split('.')
-    version = {
-      :major => extracted[0].to_i,
-      :minor => extracted[1].to_i,
-      :patch => extracted[2].to_i
-    }
-    write_yaml(version)
-    puts "Set version to #{display(version)}"
-  end
-
-  desc "Reset version to 0.0.0"
-  task :reset do
-    version = {
-      :major => 0,
-      :minor => 0,
-      :patch => 0
-    }
-    write_yaml(version)
-  end
-
-  def display(version)
-    [version[:major], version[:minor], version[:patch]].join('.')
-  end
-
-  def bump(type, version)
-    case type
-    when :major
-      {
-        :major => version[:major] + 1,
-        :minor => 0,
-        :patch => 0
-      }
-    when :minor
-      {
-        :major => version[:major],
-        :minor => version[:minor] + 1,
-        :patch => 0
-      }
-    when :patch
-      {
-        :major => version[:major],
-        :minor => version[:minor],
-        :patch => version[:patch] + 1
-      }
-    else
-      raise "Incorrect version component '#{type}' (:major, :minor, :patch) expected"
-    end
-  end
-  
-  def read_yaml(file='VERSION.yml')
-    YAML.load_file(File.join(RAILS_ROOT, file))
-  end
-
-  def write_yaml(data, file='VERSION.yml')
-    yamlized_data = data.to_yaml
-    open(file, 'w') {|f| f << yamlized_data}
-    yamlized_data
+artists_dump.each_with_index do |d, index|
+  artist = Artist.find_by_first_name(d[:first_name], :conditions => "last_name = \"#{d[:last_name]}\"")
+  if artist
+    dump_image = File.expand_path(File.dirname(__FILE__) + "/data/" + "/artist_profile_images/" + d[:image])
+    data = ''
+    open(dump_image, 'rb') {|f| data << f.read}        
+    image = Image.new(:id => index, :content_type => 'image/jpeg', :filename => d[:filename], 
+            :is_illustration => true, :user_id => artist.id, :uploaded_data => imageio_for_data(data.to_s, d[:filename]) )
+    if image.save
+      artist.image_id = image.id
+      artist.save
+    end  
+    print '.'
+  else
+    print 'x'
   end
 end
+
+
+
+class MyStringIO < StringIO
+  attr_reader :content_type, :original_filename
+  attr_writer :content_type, :original_filename
+end
+
+ def self.imageio_for_data(data, fname)  
+   imgio = MyStringIO.new(data)
+   ext = 'jpeg' if 'jpg'==ext  # attachment_fu content type must say jpeg
+   imgio.content_type, imgio.original_filename = "image/png", fname
+   return imgio
+end
+
+
+
+
+def find_resource_hash(path)
+  Dir["#{full_path}/*"].inject({}){ |result, resource|
+    puts resource.inspect
+    metafile = MetaFile.meta_data(resource)
+    metafile.merge!({'location' => find_location(resource),
+                    'name'     => find_name(resource),
+                    'contents' => MetaFile.read(resource)})
+    result[metafile['name']] = metafile
+    result
+  }
+end
+
 

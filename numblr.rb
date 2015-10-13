@@ -189,6 +189,6 @@ end
 
 puts 'done.' # amen
 
-# if you made it this far you are either lauging your ass off
+# if you made it this far you are either laughing your ass off
 # or your face is covered in palms
 
